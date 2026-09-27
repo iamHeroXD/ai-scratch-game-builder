@@ -53,18 +53,41 @@ export class GameCompiler {
         break;
     }
 
-    // 2. Ensure all custom variables specified in GameSpec exist
-    for (const v of spec.variables) {
+    // 2. Ensure all custom variables specified in GameSpec exist (defensive normalization)
+    const rawVars = spec.variables || [];
+    const varList: Array<{ name: string; initialValue: any }> = [];
+    if (Array.isArray(rawVars)) {
+      for (const v of rawVars) {
+        if (typeof v === 'string') varList.push({ name: v, initialValue: 0 });
+        else if (v && typeof v === 'object') varList.push({ name: v.name || 'Var', initialValue: v.initialValue ?? 0 });
+      }
+    } else if (typeof rawVars === 'object') {
+      for (const [k, val] of Object.entries(rawVars)) {
+        varList.push({ name: k, initialValue: val });
+      }
+    }
+    for (const v of varList) {
       project.ensureGlobalVariable(v.name, v.initialValue);
     }
 
-    // 3. Ensure all custom broadcasts exist
-    for (const b of spec.broadcasts) {
+    // 3. Ensure all custom broadcasts exist (defensive normalization)
+    const rawBc = spec.broadcasts || [];
+    const bcList: string[] = [];
+    if (Array.isArray(rawBc)) {
+      for (const b of rawBc) {
+        if (typeof b === 'string') bcList.push(b);
+        else if (b && (b as any).name) bcList.push((b as any).name);
+      }
+    } else if (typeof rawBc === 'object') {
+      bcList.push(...Object.values(rawBc as Record<string, string>));
+    }
+    for (const b of bcList) {
       project.ensureBroadcast(b);
     }
 
     // 4. Inject any custom entities not already present in the base template
-    for (const entity of spec.entities) {
+    const rawEntities = Array.isArray(spec.entities) ? spec.entities : [];
+    for (const entity of rawEntities) {
       const existingSprite = project.getSprite(entity.name);
       if (!existingSprite && entity.role !== 'player' && entity.role !== 'ui') {
         const customSprite = project.addSprite(entity.name);
