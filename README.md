@@ -2,7 +2,10 @@
 
 A production-grade, full-stack application that transforms natural language game descriptions into real, playable Scratch 3.0 & TurboWarp-compatible `.sb3` projects.
 
-Powered by Google Gemini structured generation, a deterministic Scratch AST compiler, a procedural vector asset pipeline, a 3-tier validation engine with self-healing auto-repair, and an embedded TurboWarp runner.
+- **Live Production URL**: [https://ai-scratch-game-builder.vercel.app](https://ai-scratch-game-builder.vercel.app)
+- **GitHub Repository**: [https://github.com/iamHeroXD/ai-scratch-game-builder](https://github.com/iamHeroXD/ai-scratch-game-builder)
+
+Powered by Google Gemini structured generation (`gemini-3.8-flash`), a deterministic Scratch AST compiler, a procedural vector asset pipeline, a 3-tier validation engine with self-healing auto-repair, and an embedded TurboWarp runner.
 
 ---
 
